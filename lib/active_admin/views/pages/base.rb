@@ -24,7 +24,7 @@ module ActiveAdmin
           within @head do
             insert_tag Arbre::HTML::Title, [title, render_or_call_method_or_proc_on(self, active_admin_application.site_title)].join(" | ")
             active_admin_application.stylesheets.each do |style|
-              text_node(stylesheet_link_tag(style.path, style.options).html_safe)
+              text_node(stylesheet_link_tag(style.path, style.options.dup).html_safe)
             end
 
             active_admin_application.javascripts.each do |path|
@@ -63,9 +63,9 @@ module ActiveAdmin
         end
 
         def build_flash_messages
-          if flash.keys.any?
+          if active_admin_flash_messages.any?
             div :class => 'flashes' do
-              flash.each do |type, message|
+              active_admin_flash_messages.each do |type, message|
                 div message, :class => "flash flash_#{type}"
               end
             end

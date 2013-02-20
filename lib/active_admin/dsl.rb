@@ -120,9 +120,34 @@ module ActiveAdmin
     def menu(options = {})
       config.menu(options)
     end
+    
+    # Rewrite breadcrumb links.
+    # Block will be executed inside controller.
+    # Block must return an array if you want to rewrite breadcrumb links.
+    #
+    # Example:
+    #   ActiveAdmin.register Post do
+    #
+    #     breadcrumb do
+    #       [
+    #         link_to('my piece', '/my/link/to/piece')
+    #       ]
+    #     end
+    #   end
+    #
+    def breadcrumb(&block)
+      config.breadcrumb = block
+    end
 
     def sidebar(name, options = {}, &block)
       config.sidebar_sections << ActiveAdmin::SidebarSection.new(name, options, &block)
+    end
+
+    def decorate_with(decorator_class)
+      # Force storage as a string. This will help us with reloading issues.
+      # Assuming decorator_class.to_s will return the name of the class allows
+      # us to handle a string or a class.
+      config.decorator_class_name = "::#{ decorator_class }"
     end
   end
 end

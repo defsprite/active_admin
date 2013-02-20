@@ -28,12 +28,16 @@ module ActiveAdmin
           case v
           when String
             { k => v }
+          when Symbol
+            { k => v.to_s }
           when Hash
             fields_for_params(v, :namespace => k)
           when Array
             v.map do |v|
               { "#{k}[]" => v }
             end
+          when nil
+          	{ k => '' }
           else
             raise "I don't know what to do with #{v.class} params: #{v.inspect}"
           end

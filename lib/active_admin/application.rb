@@ -12,6 +12,11 @@ module ActiveAdmin
       setting name, default
     end
 
+    def self.deprecated_inheritable_setting(name, default)
+      Namespace.deprecated_setting name, nil
+      deprecated_setting name, default
+    end
+
     # The default namespace to put controllers and routes inside. Set this
     # in config/initializers/active_admin.rb using:
     #
@@ -66,8 +71,8 @@ module ActiveAdmin
     # The namespace root.
     inheritable_setting :root_to, 'dashboard#index'
 
-    # Default CSV separator
-    inheritable_setting :csv_column_separator, ','
+    # Default CSV options
+    inheritable_setting :csv_options, {}
 
     # Active Admin makes educated guesses when displaying objects, this is
     # the list of methods it tries calling in order
@@ -81,6 +86,9 @@ module ActiveAdmin
                                       :to_s ]
 
     # == Deprecated Settings
+
+    # @deprecated Default CSV separator will be removed in 0.6.0. Use `csv_options = { :col_sep => ',' }` instead.
+    deprecated_inheritable_setting :csv_column_separator, ','
 
     # @deprecated The default sort order for index pages
     deprecated_setting :default_sort_order, 'id_desc'
@@ -212,26 +220,26 @@ module ActiveAdmin
     end
 
     #
-    # Add before, around and after filters to each registered resource.
+    # Add before, around and after filters to each registered resource and pages.
     #
     # eg:
     #
     #   ActiveAdmin.before_filter :authenticate_admin!
     #
     def before_filter(*args, &block)
-      ResourceController.before_filter(*args, &block)
+      BaseController.before_filter(*args, &block)
     end
 
     def skip_before_filter(*args, &block)
-      ResourceController.skip_before_filter(*args, &block)
+      BaseController.skip_before_filter(*args, &block)
     end
 
     def after_filter(*args, &block)
-      ResourceController.after_filter(*args, &block)
+      BaseController.after_filter(*args, &block)
     end
 
     def around_filter(*args, &block)
-      ResourceController.around_filter(*args, &block)
+      BaseController.around_filter(*args, &block)
     end
 
     # Helper method to add a dashboard section
